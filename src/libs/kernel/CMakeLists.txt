@@ -8,5 +8,5 @@ set(CXXSRC
     kernel.cpp
     )
 
-add_library(${target} ${CXXHDR} ${CXXSRC})
+add_library(${target} STATIC ${CXXHDR} ${CXXSRC})
 
