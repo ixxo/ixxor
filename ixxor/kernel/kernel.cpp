@@ -1,6 +1,8 @@
 #include "kernel.hpp"
 #include <dlfcn.h>
 #include <stdexcept>
+#include <iostream>
+#include <functional>
 
 namespace ixxor {
 
@@ -13,6 +15,9 @@ void module_init(std::string const& name, void* handle, Kernel* kernel)
         auto f_init = 
             reinterpret_cast<void(*)(char const*, void*)>(ixxo_init_sym);
         f_init(name.c_str(), kernel);
+    } else {
+        std::cerr << "No initializatino function found.\n";
+
     }
 }
 
@@ -23,6 +28,9 @@ void module_cleanup(std::string const& name, void* handle, Kernel* kernel)
         auto f_cleanup = 
             reinterpret_cast<void(*)(char const*, void*)>(ixxo_cleanup_sym);
         f_cleanup(name.c_str(), kernel);
+    } else {
+        std::cerr << "no cleanup function found....\n";
+
     }
 }
 
@@ -43,9 +51,16 @@ void Kernel::load(std::string const& module)
     // really.
     if (!hmap_.count(module)) {
         if (void* handle = dlopen(module.c_str(), RTLD_LOCAL | RTLD_LAZY)) {
-            hmap_[module] = handle;
-            // Cool now initialize that stufff...
+            // Make sure the cleanup is called when this module is unloaded...
             module_init(module, handle, this);
+            std::shared_ptr<void> hmod {
+                handle,
+                [this,module](void* h) {
+                    module_cleanup(module, h, this); 
+                    dlclose(h);
+                }
+            };
+            hmap_[module] = hmod;
         } else {
             throw std::runtime_error("loading module failed.. rc=...");
         }
@@ -55,11 +70,7 @@ void Kernel::load(std::string const& module)
 void Kernel::unload(std::string const& module)
 {
     auto it = hmap_.find(module);
-    if (it != hmap_.end()) {
-        if (int rc = dlclose(it->second)) {
-            throw std::runtime_error("error unlloading module");
-        }
-        module_cleanup(module, it->second, this);
+    if (it != hmap_.end() && it->second.unique()) {
         hmap_.erase(it);
     }
 }

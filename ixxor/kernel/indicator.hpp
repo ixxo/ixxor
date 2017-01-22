@@ -7,8 +7,8 @@ namespace ixxor {
 class Indicator
 {
 public:
-    Indicator();
-    virtual ~Indicator();
+    Indicator() {}
+    virtual ~Indicator() {}
 };
 
 
