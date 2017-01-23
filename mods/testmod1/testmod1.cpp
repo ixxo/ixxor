@@ -15,12 +15,19 @@ class MyIndicator: public Indicator
 {
     int period_;
 public:
-    explicit MyIndicator() {}//nt period) {}
+    MyIndicator()
+    {
+        std::cout << "MyIndicator created.\n";
+    }
     MyIndicator(MyIndicator&&) = default;
     MyIndicator(MyIndicator const&) = default;
     MyIndicator& operator=(MyIndicator&&) = default;
     MyIndicator& operator=(MyIndicator const&) = default;
-    ~MyIndicator() {}
+    ~MyIndicator()
+    {
+        std::cout << "MyIndicator destroyed.\n";
+    
+    }
 };
 
 }

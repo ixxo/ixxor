@@ -6,7 +6,6 @@
 
 namespace ixxor {
 
-
 namespace {
 
 void module_init(std::string const& name, void* handle, Kernel* kernel)
@@ -35,10 +34,6 @@ void module_cleanup(std::string const& name, void* handle, Kernel* kernel)
 }
 
 }
-
-
-
-
 
 Kernel::Kernel() = default;
 
@@ -74,6 +69,7 @@ void Kernel::unload(std::string const& module)
         hmap_.erase(it);
     }
 }
+
 
 
 } // close ixxor

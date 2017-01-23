@@ -15,18 +15,16 @@ class Kernel;
 namespace module_util {
 namespace detail {
 
-
-template<class IndicatorT, class... Args>
+template<class IndicatorT>
 std::shared_ptr<Indicator>
-make_concrete_indicator(Args&&... args)
+make_concrete_indicator()
 {
-    std::shared_ptr<Indicator> p_i = std::make_shared<IndicatorT>(
-            std::forward<Args>(args)...
-            );
+    auto p_i = std::make_shared<IndicatorT>();
     return p_i;
 }
 
 } // close ixxor::module_util::detail
+
 
 template<class IndicatorT>
 void register_indicator(void* kernel,
