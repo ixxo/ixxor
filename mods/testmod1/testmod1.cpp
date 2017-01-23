@@ -28,6 +28,8 @@ public:
         std::cout << "MyIndicator destroyed.\n";
     
     }
+
+    void init(int const& period) { period_ = period; }
 };
 
 }
