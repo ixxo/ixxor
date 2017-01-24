@@ -15,9 +15,10 @@ class MyIndicator: public Indicator
 {
     int period_;
 public:
-    MyIndicator()
+    explicit MyIndicator(int period)
+        : period_(period)
     {
-        std::cout << "MyIndicator created.\n";
+        std::cout << "MyIndicator created, period=" << period << ".\n";
     }
     MyIndicator(MyIndicator&&) = default;
     MyIndicator(MyIndicator const&) = default;
@@ -38,7 +39,7 @@ extern "C" __attribute__((visibility ("default")))
 void ixxo_init(char const* name, void* kernel)
 {
     std::cout << "Plugin " << name << " Initialization called....\n";
-    ixxor::module_util::register_indicator<ixxor::MyIndicator>(
+    ixxor::module_util::register_indicator<ixxor::MyIndicator, int>(
             kernel, "MyI1", module_name);
 
 }

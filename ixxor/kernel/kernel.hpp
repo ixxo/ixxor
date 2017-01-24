@@ -1,10 +1,12 @@
 #ifndef INCLUDED_KERNEL
 #define INCLUDED_KERNEL
-#include <string>
-#include <unordered_map>
-
+#include "protobuf.hpp"
 #include "indicator.hpp"
 #include "indicator_registry.hpp"
+
+#include <string>
+#include <unordered_map>
+#include <array>
 
 namespace ixxor {
 
@@ -22,7 +24,7 @@ public:
 
     // Create an indicator by name.
     template<class... Args>
-    std::shared_ptr<Indicator>
+    std::shared_ptr<Indicator> // should be unique but yeah
     indicator(std::string const& name, Args&&... args) const;
 
 private:
@@ -44,10 +46,13 @@ Kernel::indicator(std::string const& name, Args&&... args) const
     auto it = imap_.find(name);
     if (it == imap_.end()) return nullptr;
     auto const& entry = it->second;
-    // no arguments for now...
-    auto creator =
-        reinterpret_cast<std::shared_ptr<Indicator>(*)()>(entry.creator);
-    return creator();
+    constexpr std::size_t const Np = sizeof...(Args);
+    using param_type = std::array<Protobuf, Np>;
+    param_type pack { { protobuf_converter<Args>::to_protobuf(args)... } };
+    auto creator = reinterpret_cast<
+            std::shared_ptr<Indicator>(*)(param_type const&)
+                                    >(entry.creator);
+    return creator(pack);
 }
 
 inline

@@ -3,11 +3,14 @@
 #include "indicator.hpp"
 #include "indicator_registry.hpp"
 #include "kernel.hpp"
+#include "protobuf.hpp"
 
 #include <string>
 #include <memory>
 #include <iostream>
 #include <type_traits>
+#include <array>
+#include <tuple>
 
 // In-header implementation
 namespace ixxor {
@@ -18,12 +21,61 @@ class Kernel;
 namespace module_util {
 namespace detail {
 
-template<class IndicatorT>
-std::shared_ptr<Indicator>
-make_concrete_indicator()
+template<int...>
+struct sequence {};
+
+template<int N, int... S>
+struct gens: gens<N-1, N-1, S...> {};
+
+template<int... S>
+struct gens<0, S...> {
+    using type = sequence<S...>;
+};
+
+template<class IndicatorT, class... Args>
+struct indicator_creator
 {
-    auto p_i = std::make_shared<IndicatorT>();
-    return p_i;
+    std::tuple<Args...> args;
+
+    template<int... S>
+    std::shared_ptr<Indicator> dispatch(sequence<S...>) const
+    {
+        return std::make_shared<IndicatorT>(std::get<S>(args)...);
+    }
+
+    std::shared_ptr<Indicator> call() const
+    {
+        return dispatch(typename gens<sizeof...(Args)>::type());
+    }
+};
+
+template<class Arg, class Arg2, class... Args>
+std::tuple<Arg, Args...>
+convert_parameter_pack(Protobuf const* buf)
+{
+    return std::tuple_cat(
+            convert_parameter_pack<Arg>(buf),
+            convert_parameter_pack<Arg2, Args...>(buf+1)
+            );
+}
+
+template<class Arg>
+std::tuple<Arg>
+convert_parameter_pack(Protobuf const* buf)
+{
+    return std::make_tuple<Arg>(protobuf_converter<Arg>::from_protobuf(buf[0]));
+}
+
+
+template<class IndicatorT, class... Args>
+std::shared_ptr<Indicator>
+make_concrete_indicator(std::array<Protobuf, sizeof...(Args)> const& args)
+{
+    constexpr std::size_t const N = sizeof...(Args);
+    indicator_creator<IndicatorT, Args...> creator {
+        convert_parameter_pack<Args...>(args.data())
+    };
+    return creator.call();
 }
 
 template<class T> struct bla {};
@@ -59,14 +111,14 @@ using indicator_arity =
 } // close ixxor::module_util::detail
 
 
-template<class IndicatorT>
+template<class IndicatorT, class... Args>
 void register_indicator(void* kernel,
                         std::string const& name,
                         std::string const& module)
 {
     // Register the constructor and the destructor with that thing...
     // No arguments for now.
-    auto creator = &detail::make_concrete_indicator<IndicatorT>;
+    auto creator = &detail::make_concrete_indicator<IndicatorT, Args...>;
 
     IndicatorRegItem item;
     item.name = name;
