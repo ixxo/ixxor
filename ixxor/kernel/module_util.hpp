@@ -12,7 +12,9 @@
 #include <array>
 #include <tuple>
 
-// In-header implementation
+// This must remain a header-only implementation because it's included
+// in plugins.
+
 namespace ixxor {
 
 // fwd declaration.
@@ -53,8 +55,7 @@ struct convert_parameter_pack
     {
         return std::tuple_cat(
             std::make_tuple<Arg>(
-                protobuf_converter<Arg>::from_protobuf(buf[0])
-                ),
+                protobuf_converter<Arg>::from_protobuf(buf[0])),
             convert_parameter_pack<Args...>::convert(buf+1)
             );
     }
@@ -68,8 +69,7 @@ struct convert_parameter_pack<Arg>
     convert(Protobuf const* buf)
     {
         return std::make_tuple<Arg>(
-            protobuf_converter<Arg>::from_protobuf(buf[0])
-            );
+            protobuf_converter<Arg>::from_protobuf(buf[0]));
     }
 };
 
@@ -84,7 +84,6 @@ make_concrete_indicator(std::array<Protobuf, sizeof...(Args)> const& args)
     return creator.dispatch(typename generate_seq<sizeof...(Args)>::type());
 }
 
-
 } // close ixxor::module_util::detail
 
 
@@ -93,15 +92,13 @@ void register_indicator(std::string const& name,
                         void* kernel,
                         std::string const& module)
 {
-    // Register the constructor and the destructor with that thing...
-    // No arguments for now.
-    auto creator = &detail::make_concrete_indicator<IndicatorT, Args...>;
-
-    IndicatorRegItem item;
-    item.name = name;
-    item.module = module;
-    item.arity = sizeof...(Args);
-    item.creator = reinterpret_cast<void*(*)(void*)>(creator);
+    IndicatorRegItem item {
+        name,
+        module,
+        sizeof...(Args),
+        reinterpret_cast<void*(*)(void*)>(
+            &detail::make_concrete_indicator<IndicatorT, Args...>)
+    };
     static_cast<Kernel*>(kernel)->associate(item);
 }
 

@@ -1,6 +1,7 @@
 #ifndef INCLUDED_IXXOR_INDICATOR_REGISTRY
 #define INCLUDED_IXXOR_INDICATOR_REGISTRY
 #include <string>
+#include <cstddef>
 
 namespace ixxor {
 
@@ -12,7 +13,6 @@ public:
     std::size_t arity;
     void*(*creator)(void*);
 };
-
 
 }
 
