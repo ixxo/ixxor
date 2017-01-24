@@ -12,3 +12,7 @@ target_include_directories(${target}
     )
 
 
+install(TARGETS ${target}
+    DESTINATION modules
+    )
+

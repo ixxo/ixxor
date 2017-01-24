@@ -10,8 +10,11 @@ int main()
     Kernel kernel;
     kernel.load("mods/testmod1/libtestmod1.so");
 
-    auto MyI = kernel.indicator("MyI1", 123);
-    MyI.reset();
+    auto MyI1 = kernel.indicator("MyI1", 123);
+    auto MyI2 = kernel.indicator("MyI2", 123, 34.51);
+    
+    MyI1.reset();
+    MyI2.reset();
 
     return 0;
 }

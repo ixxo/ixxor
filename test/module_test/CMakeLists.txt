@@ -16,3 +16,7 @@ target_link_libraries(${target}
     PRIVATE
     kernel
     )
+
+install(TARGETS ${target}
+    DESTINATION bin
+    )
