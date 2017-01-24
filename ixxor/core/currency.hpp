@@ -2,6 +2,7 @@
 #define INCLUDED_CORE_CURRENCY
 #include <string>
 #include <array>
+#include <ostream>
 
 namespace ixxor {
 class Currency;
@@ -18,11 +19,15 @@ public:
     Currency();
     Currency(Currency const& other);
     Currency& operator=(Currency const&);
+
+    char const* data() const;
 private:
     friend bool operator==(Currency const& lhs, Currency const& rhs);
     friend bool operator!=(Currency const& lhs, Currency const& rhs);
 };
 
+
+std::ostream& operator<<(std::ostream&, Currency const&);
 
 }
 
