@@ -1,5 +1,8 @@
 #include <ixxor/kernel/kernel.hpp>
 
+// this is still very manual.. just check the output if you get the right
+// period in the constructed indicator...
+
 using namespace ixxor;
 
 int main()

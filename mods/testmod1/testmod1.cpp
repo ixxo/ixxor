@@ -1,9 +1,8 @@
-#include <iostream>
 #include <ixxor/kernel/module_util.hpp>
 #include <ixxor/kernel/indicator.hpp>
+#include <iostream>
 
 namespace {
-
 
 char const* module_name = "testmod1";
 
