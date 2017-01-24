@@ -1,12 +1,13 @@
 #ifndef INCLUDED_CORE_SYMBOL
 #define INCLUDED_CORE_SYMBOL
+#include <array>
 
 namespace ixxor {
 
 // Unique identifier...
-class Symbol
+class SymbolID
 {
-    char s[32];
+    std::array<char,32> id_;
 };
 
 

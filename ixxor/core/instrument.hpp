@@ -2,6 +2,7 @@
 #define INCLUDED_CORE_INSTRUMENT
 #include "currency.hpp"
 #include "exchange.hpp"
+#include "price.hpp"
 #include <array>
 
 namespace ixxor {
@@ -16,10 +17,11 @@ class Instrument
 public:
     Instrument();
     ~Instrument();
-private:
+public:
     InstrumentID id_;
     ExchangeID exchange_;
     Currency ccy_;
+    Price ticksize_;
 };
 
 }

@@ -17,6 +17,7 @@ class Exchange
 {
 public:
     ExchangeID id_;
+    std::string desc_;
 };
 
 }

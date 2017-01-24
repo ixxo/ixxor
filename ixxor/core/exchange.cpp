@@ -3,7 +3,6 @@
 
 namespace ixxor {
 
-
 ExchangeID::ExchangeID()
 {
     id_.fill('\0');
