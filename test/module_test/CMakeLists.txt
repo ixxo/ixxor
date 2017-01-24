@@ -1,10 +1,10 @@
 get_filename_component(target ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-set(CXXHDR)
+
 set(CXXSRC
-    testmod1.cpp
+    module_test.m.cpp
     )
 
-add_library(${target} MODULE ${CXXHDR} ${CXXSRC})
+add_executable(${target} ${CXXHDR} ${CXXSRC})
 
 target_include_directories(${target}
     PRIVATE
@@ -12,3 +12,7 @@ target_include_directories(${target}
     )
 
 
+target_link_libraries(${target}
+    PRIVATE
+    kernel
+    )
