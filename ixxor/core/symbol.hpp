@@ -1,16 +1,12 @@
 #ifndef INCLUDED_CORE_SYMBOL
 #define INCLUDED_CORE_SYMBOL
-#include <array>
+#include "detail/identifier.hpp"
 
 namespace ixxor {
 
-// Unique identifier...
-class SymbolID
-{
-    std::array<char,32> id_;
-};
+using SymbolID = detail::Identifier<32>;
 
-} // close ixxor
+}
 
 #endif
 

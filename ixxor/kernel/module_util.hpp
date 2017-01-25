@@ -102,6 +102,15 @@ void register_indicator(std::string const& name,
     static_cast<Kernel*>(kernel)->associate(item);
 }
 
+template<class DataSource>
+void register_data_source(std::string name,
+                          void* kernel,
+                          std::string const& module)
+{
+
+
+}
+
 
 } // close ixxor::module_util
 } // close ixxor
