@@ -8,7 +8,7 @@ bool DataSource::is_available(SymbolID const& symbol) const
     return symbols_.count(symbol);
 }
 
-bool DataSource::subscribe(SymbolID const& symbol)
+bool DataSource::subscribe(SymbolID const& symbol, callback_type callback)
 {
     auto it = symbols_.find(symbol);
     if (it == symbols_.end()) {
@@ -18,9 +18,23 @@ bool DataSource::subscribe(SymbolID const& symbol)
             );
     }
     if (it->second) return false;
-    bool succ = subscribe_impl(symbol);
-    it->second = succ;
-    return succ;
+    it->second = callback;
+    if (!subscribe_impl(symbol)) {
+        it->second = nullptr;
+        return false;
+    }
+    return true;
+}
+
+void DataSource::publish(SymbolID const& symbol, Tick const& tick)
+{
+    auto it = symbols_.find(symbol);
+    if (it == symbols_.end() || !it->second) {
+        throw std::runtime_error(
+                "Weird. Ticks for an unsupported/unregistered symbol??");
+    }
+    // Dispach the parent.
+    it->second(symbol, tick);
 }
 
 } // :: ixxor
