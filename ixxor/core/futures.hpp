@@ -16,7 +16,7 @@ public:
     SymbolID symbol_;
 };
 
-}
+} // close ixxor
 
 #endif
 

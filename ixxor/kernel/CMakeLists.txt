@@ -6,7 +6,13 @@ set(CXXHDR
 
 set(CXXSRC
     kernel.cpp
+    indicator.cpp
     )
 
 add_library(${target} STATIC ${CXXHDR} ${CXXSRC})
+
+target_include_directories(${target}
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}
+    )
 

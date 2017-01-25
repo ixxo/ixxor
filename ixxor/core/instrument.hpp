@@ -24,7 +24,7 @@ public:
     Price ticksize_;
 };
 
-}
+} // close ixxor
 
 #endif
 

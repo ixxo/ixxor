@@ -29,6 +29,6 @@ private:
 
 std::ostream& operator<<(std::ostream&, Currency const&);
 
-}
+} // close ixxor
 
 #endif

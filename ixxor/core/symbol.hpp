@@ -10,8 +10,7 @@ class SymbolID
     std::array<char,32> id_;
 };
 
-
-}
+} // close ixxor
 
 #endif
 

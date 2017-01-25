@@ -2,7 +2,6 @@
 
 namespace ixxor {
 
-
 Currency::Currency():
     ccy_ { { 0,0,0,0} } {}
 
@@ -36,4 +35,5 @@ std::ostream& operator<<(std::ostream& ss, Currency const& ccy)
     return ss << ccy.data();
 }
 
-}
+} // close ixxor
+
