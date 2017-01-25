@@ -19,15 +19,17 @@ public:
     {
         std::cout << "MyI1 created, period=" << period << ".\n";
     }
-    MyI1(MyI1&&) = default;
-    MyI1(MyI1 const&) = default;
-    MyI1& operator=(MyI1&&) = default;
-    MyI1& operator=(MyI1 const&) = default;
     ~MyI1()
     {
         std::cout << "MyI1 destroyed.\n";
-    
     }
+
+private:
+    void push_impl(SymbolID const& symbol, Tick const& tick) override
+    {
+        // do nothing for now.
+    }
+
 };
 
 class MyI2: public Indicator
@@ -43,17 +45,17 @@ public:
         std::cout << "MyI2 created, period=" << period << ", factor=" <<
                      factor<< ".\n";
     }
-    MyI2(MyI2&&) = default;
-    MyI2(MyI2 const&) = default;
-    MyI2& operator=(MyI2&&) = default;
-    MyI2& operator=(MyI2 const&) = default;
     ~MyI2()
     {
         std::cout << "MyI2 destroyed.\n";
     
     }
+private:
+    void push_impl(SymbolID const& symbol, Tick const& tick) override
+    {
+        // do nothing for now.
+    }
 };
-
 
 }
 
