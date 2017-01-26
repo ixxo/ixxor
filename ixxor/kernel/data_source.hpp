@@ -17,9 +17,9 @@ public:
 protected:
     void publish(SymbolID const& symbol, Tick const& tick);
 private:
-    virtual bool init_impl() = 0;
-    virtual bool subscribe_impl(SymbolID const& symbol) const = 0;
-    virtual std::vector<SymbolID> const& available_symbols() = 0;
+    virtual bool init_source() = 0;
+    virtual bool subscribe_symbol(SymbolID const& symbol) = 0;
+    virtual std::vector<SymbolID> const& available_symbols() const = 0;
 private:
     std::unordered_map<SymbolID, callback_type> symbols_;
 };

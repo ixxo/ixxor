@@ -11,10 +11,6 @@ namespace detail {
 
 template<int N> class Identifier;
 
-template<int N>
-bool operator==(Identifier<N> const& lhs, Identifier<N> const& rhs);
-template<int N>
-bool operator!=(Identifier<N> const& lhs, Identifier<N> const& rhs);
 
 template<int N>
 class Identifier
@@ -24,6 +20,8 @@ public:
     using size_type = typename impl_type::size_type;
 
     Identifier();
+    template<int M>
+    Identifier(char const (&id)[M]);
     Identifier(Identifier const&) = default;
     Identifier& operator=(Identifier const&) = default;
     ~Identifier() = default;
@@ -34,13 +32,11 @@ public:
 
     size_type length() const;
 
+    bool operator==(Identifier<N> const& other) const;
+    bool operator!=(Identifier<N> const& other) const;
+
 private:
     impl_type id_;
-private:
-    friend
-    bool operator==(Identifier<N> const&, Identifier<N> const&);
-    friend
-    bool operator!=(Identifier<N> const&, Identifier<N> const&);
 };
 
 } // close ixxor::detail
@@ -71,6 +67,14 @@ Identifier<N>::Identifier()
 }
 
 template<int N>
+template<int M>
+Identifier<N>::Identifier(char const (&id)[M])
+{
+    static_assert(M <= N, "ID capacity overflow");
+    std::copy(&id[0], &id[0] + M, id_.data());
+}
+
+template<int N>
 typename Identifier<N>::size_type
 Identifier<N>::length() const
 {
@@ -88,17 +92,17 @@ char const* Identifier<N>::data() const
 {
     return id_.data();
 }
-
+    
 template<int N>
-bool operator==(Identifier<N> const& lhs, Identifier<N> const& rhs)
+bool Identifier<N>::operator==(Identifier<N> const& other) const
 {
-    return lhs.id_ == rhs.id_;
+    return id_ == other.id_;
 }
 
 template<int N>
-bool operator!=(Identifier<N> const& lhs, Identifier<N> const& rhs)
+bool Identifier<N>::operator!=(Identifier<N> const& other) const
 {
-    return lhs.id_ != rhs.id_;
+    return id_ != other.id_;
 }
 
 } // close ixxor:detail

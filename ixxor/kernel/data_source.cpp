@@ -19,7 +19,7 @@ bool DataSource::subscribe(SymbolID const& symbol, callback_type callback)
     }
     if (it->second) return false;
     it->second = callback;
-    if (!subscribe_impl(symbol)) {
+    if (!subscribe_symbol(symbol)) {
         it->second = nullptr;
         return false;
     }
