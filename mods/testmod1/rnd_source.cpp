@@ -1,6 +1,7 @@
 #include "rnd_source.hpp"
 #include <thread>
 #include <atomic>
+#include <random>
 
 namespace ixxor {
 
@@ -47,13 +48,29 @@ RndSource::available_symbols() const
 
 void RndSource::Impl::worker(RndSource* parent, std::atomic_bool& sem)
 {
-    // Start doing some shit.
+    std::default_random_engine eng;
+    std::uniform_int_distribution<> intd(1,1000);
+    std::uniform_real_distribution<> reald(-1.2,1.2);
+    std::uniform_int_distribution<> vold(1, 3);
+
+    Price price{100.0};
+    Price quant{0.01};
+
+    Datetime timepoint;//(2017, 1, 13, 6, 0, 0);
+
     while(sem.load()) {
         SymbolID symbol{"IXXORND"};
+        auto n_ms = intd(eng);
+        int v = vold(eng);
         Tick tick;
+        tick.p = price;
+        tick.v = Volume{v};
+        tick.t = timepoint;
+        // well yeah we don't handle dates very well yet...
+        std::this_thread::sleep_for(std::chrono::milliseconds(n_ms));
         parent->publish(symbol, tick);
-        // publish some tick...
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        int dif = round(reald(eng));
+        price += dif * quant;
     }
 }
 

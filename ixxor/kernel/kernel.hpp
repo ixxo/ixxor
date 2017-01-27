@@ -27,6 +27,7 @@ public:
     std::shared_ptr<Indicator> // should be unique but yeah
     indicator(std::string const& name, Args&&... args) const;
 
+
 private:
     using handle_map =
         std::unordered_map<std::string, std::shared_ptr<void> >;

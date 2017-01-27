@@ -12,6 +12,11 @@ class Datetime
 public:
     Duration ts;
 
+    Datetime() = default;
+    Datetime(Datetime const&) = default;
+    Datetime& operator=(Datetime const&) = default;
+    //Datetime(int y, int m, int d, int H, int M, int S=0, int us=0);
+
     Duration const& from_epoch() const;
     Datetime& operator+=(Duration const&);
     Datetime& operator-=(Duration const&);

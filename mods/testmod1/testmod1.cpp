@@ -1,5 +1,6 @@
 #include "my_i1.hpp"
 #include "my_i2.hpp"
+#include "rnd_source.hpp"
 
 #include <ixxor/kernel/module_util.hpp>
 #include <iostream>
@@ -20,6 +21,11 @@ void ixxo_init(char const* name, void* kernel)
 
     register_indicator<ixxor::MyI2, int, double>("MyI2",
             kernel, module_name);
+
+    register_data_source<ixxor::RndSource>("FoobarSource",
+            kernel, module_name);
+
+
 }
 
 extern "C" __attribute__((visibility ("default")))
