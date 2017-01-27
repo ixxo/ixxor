@@ -9,6 +9,6 @@ include(cmake/config.cmake)
 
 add_subdirectory(ixxor)
 add_subdirectory(mods)
-add_subdirectory(test)
+add_subdirectory(tests)
 
 
