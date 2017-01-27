@@ -12,9 +12,12 @@ int main()
 
     auto MyI1 = kernel.indicator("MyI1", 123);
     auto MyI2 = kernel.indicator("MyI2", 123, 34.51);
+
+    // Let's initialize the source then...
     
     MyI1.reset();
     MyI2.reset();
+
 
     return 0;
 }

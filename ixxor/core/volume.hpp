@@ -3,7 +3,11 @@
 
 namespace ixxor {
 
-using Volume = std::size_t;
+struct Volume
+{
+    int v_;
+};
+
 
 } // close ixxor
 
