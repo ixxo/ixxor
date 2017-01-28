@@ -61,6 +61,11 @@ public:
     {
         return ts < other.ts;
     }
+
+    static Duration from_HMSu(int H, int M, int S, int uS)
+    {
+        return microseconds(uS + 1000000*(S + 60*(M + 60*H)));
+    }
 };
 
 

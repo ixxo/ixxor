@@ -12,7 +12,7 @@ char const* module_name = "testmod1";
 }
 
 extern "C" __attribute__((visibility ("default")))
-void ixxo_init(char const* name, void* kernel)
+void ixxo_init(char const* name, ixxor::Kernel* kernel)
 {
     using namespace ixxor::module_util;
     std::cout << "Plugin " << name << " Initialization called....\n";
@@ -29,7 +29,7 @@ void ixxo_init(char const* name, void* kernel)
 }
 
 extern "C" __attribute__((visibility ("default")))
-void ixxo_cleanup(char const* name, void* kernel)
+void ixxo_cleanup(char const* name, ixxor::Kernel* kernel)
 {
     std::cout << "Plugin " << name << " Clean up called....\n";
 }

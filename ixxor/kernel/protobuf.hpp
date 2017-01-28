@@ -1,11 +1,22 @@
 #ifndef INCLUDED_IXXOR_PROTOBUF
 #define INCLUDED_IXXOR_PROTOBUF
+//!
+//! @file ixxor/kernel/protobuf.hpp
+//! @brief Protocol Buffer
+//! @details The protocol buffer is used in the communication between the
+//! kernel and modules.
+//!
 #include <string>
 #include <sstream>
 #include <type_traits>
 
 namespace ixxor {
 
+//!
+//! @class Protobuf
+//! @brief Protocol buffer type
+//! @details The implementation of a protocol buffer type
+//!
 class Protobuf
 {
 public:
@@ -57,6 +68,20 @@ struct protobuf_converter<std::string>
     static std::string from_protobuf(Protobuf const& pb)
     {
         return pb.erased;
+    }
+};
+
+template<>
+struct protobuf_converter<Protobuf>
+{
+    static Protobuf const& to_protobuf(Protobuf const& t)
+    {
+        return t;
+    }
+
+    static Protobuf const& from_protobuf(Protobuf const& pb)
+    {
+        return pb;
     }
 };
 

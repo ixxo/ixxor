@@ -15,6 +15,7 @@ struct RndSource::Impl
 
 RndSource::RndSource()
 {
+    symbols_ = {"IXXORND"};
     impl_.reset(new Impl);
     impl_->sem_ = false;
 }
@@ -30,7 +31,9 @@ bool RndSource::init_source()
 {
     // Initialize the worker...
     impl_->sem_ = true;
-    impl_->t_.reset(new std::thread(Impl::worker, this, std::ref(impl_->sem_)));
+    impl_->t_.reset(new std::thread{
+            Impl::worker, this, std::ref(impl_->sem_)
+            });
     return true;
 }
 
@@ -56,7 +59,7 @@ void RndSource::Impl::worker(RndSource* parent, std::atomic_bool& sem)
     Price price{100.0};
     Price quant{0.01};
 
-    Ptime timepoint(2016,1,10,6,0,0);
+    Ptime timepoint{2016,1,10,6,0,0};
 
     while(sem.load()) {
         SymbolID symbol{"IXXORND"};
@@ -66,11 +69,11 @@ void RndSource::Impl::worker(RndSource* parent, std::atomic_bool& sem)
         tick.p = price;
         tick.v = Volume{v};
         tick.t = timepoint;
-        // well yeah we don't handle dates very well yet...
         std::this_thread::sleep_for(std::chrono::milliseconds(n_ms));
         parent->publish(symbol, tick);
         int dif = round(reald(eng));
         price += dif * quant;
+        timepoint += Duration::milliseconds(n_ms);
     }
 }
 
