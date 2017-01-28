@@ -59,6 +59,25 @@ struct generate_seq<0, S...> {
 };
 
 
+template<class T>
+struct ComponentDeleter
+{
+    void(*deleter_)(T*);
+    static void my_deleter(T* ptr)
+    {
+        delete ptr;
+    }
+public:
+    ComponentDeleter(): deleter_(&ComponentDeleter<T>::my_deleter) {}
+    ComponentDeleter(ComponentDeleter const&) = default;
+    ComponentDeleter& operator=(ComponentDeleter const&) = default;
+
+    void operator()(T* ptr) const
+    {
+        deleter_(ptr);
+    }
+};
+
 template<class BaseComponent, class ComponentT, class... Args>
 struct kernel_component_creator
 {
@@ -67,7 +86,11 @@ struct kernel_component_creator
     template<int... S>
     std::shared_ptr<BaseComponent> dispatch(seq<S...>) const
     {
-        return std::make_shared<ComponentT>(std::get<S>(args)...);
+        std::shared_ptr<ComponentT> ptr{
+            new ComponentT{std::get<S>(args)...},
+            ComponentDeleter<ComponentT>{}
+        };
+        return ptr;
     }
 };
 
