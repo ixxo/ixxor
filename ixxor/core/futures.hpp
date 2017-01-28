@@ -2,7 +2,7 @@
 #define INCLUDED_CORE_FUTURE
 #include "instrument.hpp"
 #include "volume.hpp"
-#include "datetime.hpp"
+#include "ptime.hpp"
 #include "symbol.hpp"
 
 namespace ixxor {
@@ -12,7 +12,7 @@ class Futures
 public:
     Instrument instrument_;
     Volume lotsize_;
-    Datetime expiry_;
+    Ptime expiry_;
     SymbolID symbol_;
 };
 

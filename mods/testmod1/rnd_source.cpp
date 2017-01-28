@@ -56,7 +56,7 @@ void RndSource::Impl::worker(RndSource* parent, std::atomic_bool& sem)
     Price price{100.0};
     Price quant{0.01};
 
-    Datetime timepoint;//(2017, 1, 13, 6, 0, 0);
+    Ptime timepoint;//(2017, 1, 13, 6, 0, 0);
 
     while(sem.load()) {
         SymbolID symbol{"IXXORND"};

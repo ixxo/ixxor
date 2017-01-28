@@ -1,12 +1,12 @@
 #ifndef INCLUDED_CORE_TIME_SERIES
 #define INCLUDED_CORE_TIME_SERIES
-#include "datetime.hpp"
+#include "ptime.hpp"
 #include <vector>
 #include <algorithm>
 
 namespace ixxor {
 
-template<class VT, class TS=Datetime>
+template<class VT, class TS=Ptime>
 class TimeSeries
 {
     using impl_type = std::vector<std::pair<TS, VT> >;
