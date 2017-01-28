@@ -9,7 +9,6 @@
 
 namespace ixxor {
 
-
 class KernelComponentEntry
 {
 public:
@@ -19,7 +18,6 @@ public:
     void*(*creator)(void*);
 };
 
-
 namespace detail {
 template<class Arg, class... Args>
 struct convert_parameter_pack
@@ -28,8 +26,7 @@ struct convert_parameter_pack
     static convert(Protobuf const* buf)
     {
         return std::tuple_cat(
-            std::make_tuple<Arg>(
-                protobuf_converter<Arg>::from_protobuf(buf[0])),
+            std::make_tuple<Arg>(protobuf_converter<Arg>::from_protobuf(buf[0])),
             convert_parameter_pack<Args...>::convert(buf+1)
             );
     }
@@ -38,9 +35,7 @@ struct convert_parameter_pack
 template<class Arg>
 struct convert_parameter_pack<Arg>
 {
-
-    static std::tuple<Arg>
-    convert(Protobuf const* buf)
+    static std::tuple<Arg> convert(Protobuf const* buf)
     {
         return std::make_tuple<Arg>(
             protobuf_converter<Arg>::from_protobuf(buf[0]));
@@ -60,7 +55,7 @@ struct generate_seq<0, S...> {
 
 
 template<class T>
-struct ComponentDeleter
+struct module_pointer_deleter
 {
     void(*deleter_)(T*);
     static void my_deleter(T* ptr)
@@ -68,9 +63,10 @@ struct ComponentDeleter
         delete ptr;
     }
 public:
-    ComponentDeleter(): deleter_(&ComponentDeleter<T>::my_deleter) {}
-    ComponentDeleter(ComponentDeleter const&) = default;
-    ComponentDeleter& operator=(ComponentDeleter const&) = default;
+    module_pointer_deleter():
+        deleter_(&module_pointer_deleter<T>::my_deleter) {}
+    module_pointer_deleter(module_pointer_deleter const&) = default;
+    module_pointer_deleter& operator=(module_pointer_deleter const&) = default;
 
     void operator()(T* ptr) const
     {
@@ -88,7 +84,7 @@ struct kernel_component_creator
     {
         std::shared_ptr<ComponentT> ptr{
             new ComponentT{std::get<S>(args)...},
-            ComponentDeleter<ComponentT>{}
+            module_pointer_deleter<ComponentT>{}
         };
         return ptr;
     }

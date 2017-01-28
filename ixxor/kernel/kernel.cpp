@@ -4,36 +4,34 @@
 #include <iostream>
 #include <functional>
 
+
 namespace ixxor {
 
 namespace {
 
-void module_init(std::string const& name, void* handle, Kernel* kernel)
+void module_init(char const* name, void* handle, Kernel* kernel)
 {
-    if (void* ixxo_init_sym = dlsym(handle, "ixxo_init")) {
-        auto f_init = 
-            reinterpret_cast<void(*)(char const*, void*)>(ixxo_init_sym);
-        f_init(name.c_str(), kernel);
+    if (void* f = dlsym(handle, "ixxo_init")) {
+        auto ixxo_init = reinterpret_cast<void(*)(char const*, void*)>(f);
+        ixxo_init(name, kernel);
     } else {
         std::cerr << "No initializatino function found.\n";
-
     }
 }
 
-void module_cleanup(std::string const& name, void* handle, Kernel* kernel)
+void module_cleanup(char const* name, void* handle, Kernel* kernel)
 {
     // just call the cleanup function, if there's one.
-    if (void* ixxo_cleanup_sym = dlsym(handle, "ixxo_cleanup")) {
-        auto f_cleanup = 
-            reinterpret_cast<void(*)(char const*, void*)>(ixxo_cleanup_sym);
-        f_cleanup(name.c_str(), kernel);
+    if (void* f = dlsym(handle, "ixxo_cleanup")) {
+        auto ixxo_cleanup = reinterpret_cast<void(*)(char const*, void*)>(f);
+        ixxo_cleanup(name, kernel);
     } else {
         std::cerr << "no cleanup function found....\n";
-
     }
 }
 
-}
+} // :: ixxor::<anonymous>
+
 
 Kernel::Kernel() = default;
 
@@ -41,17 +39,15 @@ Kernel::~Kernel() = default;
 
 void Kernel::load(std::string const& module)
 {
-    // for now we don't support and don't expect multiple module loading...
-    // but this will change... at some point... .i just want to make a test
-    // really.
     if (!hmap_.count(module)) {
-        if (void* handle = dlopen(module.c_str(), RTLD_LOCAL | RTLD_LAZY)) {
+        std::string so_file = module; // for now.
+        if (void* handle = dlopen(so_file.c_str(), RTLD_LOCAL | RTLD_LAZY)) {
             // Make sure the cleanup is called when this module is unloaded...
-            module_init(module, handle, this);
+            module_init(module.c_str(), handle, this);
             std::shared_ptr<void> hmod {
                 handle,
                 [this,module](void* h) {
-                    module_cleanup(module, h, this); 
+                    module_cleanup(module.c_str(), h, this); 
                     dlclose(h);
                 }
             };
@@ -71,6 +67,5 @@ void Kernel::unload(std::string const& module)
 }
 
 
-
-} // close ixxor
+} // :: ixxor
 

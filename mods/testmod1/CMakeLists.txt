@@ -22,6 +22,6 @@ target_link_libraries(${target}
     )
 
 install(TARGETS ${target}
-    DESTINATION modules
+    DESTINATION ${IXXOR_PLUGINS_DIR}
     )
 

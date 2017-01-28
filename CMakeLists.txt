@@ -6,6 +6,7 @@ project(Ixxor)
 
 
 include(cmake/config.cmake)
+include(cmake/macros.cmake)
 
 add_subdirectory(ixxor)
 add_subdirectory(mods)

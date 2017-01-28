@@ -12,10 +12,14 @@ namespace ixxor {
 class Kernel
 {
 public:
+    // No unloading for now...
     Kernel();
     ~Kernel();
+    Kernel(Kernel const&) = delete;
+    Kernel& operator=(Kernel const&) = delete;
+    Kernel(Kernel&&) = delete;
+    Kernel& operator=(Kernel&&) = delete;
 
-    // For now, 'module' is a relative path to a '.so' file
     void load(std::string const& module);
     void unload(std::string const& module);
 
@@ -26,7 +30,6 @@ public:
     std::shared_ptr<Component> // should be unique but yeah
     get(std::string const& name, Args&&... args) const;
 
-
 private:
     using handle_map =
         std::unordered_map<std::string, std::shared_ptr<void> >;
@@ -36,7 +39,6 @@ private:
     handle_map hmap_;
     component_map components_;
 };
-
 
 // inline implementation
 template<class Component, class... Args>
@@ -60,7 +62,7 @@ void Kernel::associate(KernelComponentEntry const& item)
     components_.insert(std::make_pair(item.name, item));
 }
 
-} // close ixxor
+} // :: ixxor
 
 #endif // INCLUDED_KERNEL
 
