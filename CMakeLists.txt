@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.1.0)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 project(Ixxor)
 
 
-include(cmake/config.cmake)
-include(cmake/macros.cmake)
+include(config)
+include(macros)
 
 add_subdirectory(ixxor)
 add_subdirectory(mods)

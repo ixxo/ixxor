@@ -1,2 +1,1 @@
-include(cmake/macros/ixxor_add_plugin_test.cmake)
-
+include(macros/ixxor_add_module_test)
