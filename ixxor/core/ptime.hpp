@@ -23,10 +23,10 @@ public:
         Ptime{Duration::hours(date.days_since_epoch() * 24) + tod} {}
 
     Ptime(int y, int m, int d, int H, int M, int S=0, int uS=0):
-        Ptime{Date{y,m,d},
-              Duration::microseconds(uS + 1000000*(S + 60*(M + 60*H)))} {}
+        Ptime{Date{y,m,d}, Duration::from_HMSu(H, M, S, uS)} {}
 
 private:
+
     Ptime(Duration const& dur): ts{dur} {}
 
 public:
