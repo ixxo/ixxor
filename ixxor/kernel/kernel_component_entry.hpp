@@ -42,6 +42,7 @@ struct convert_parameter_pack<Arg>
     }
 };
 
+
 template<int...>
 struct seq {};
 
@@ -94,16 +95,13 @@ template<class Component, class ComponentT, class... Args>
 std::shared_ptr<Component>
 make_concrete_component(std::array<Protobuf, sizeof...(Args)> const& args)
 {
-    constexpr std::size_t const N = sizeof...(Args);
     kernel_component_creator<Component, ComponentT, Args...> creator {
         convert_parameter_pack<Args...>::convert(args.data())
     };
     return creator.dispatch(typename generate_seq<sizeof...(Args)>::type());
 }
 
-
 } // :: ixxor::detail
-
 
 template<class ComponentBase, class ComponentT, class... Args>
 KernelComponentEntry

@@ -8,7 +8,5 @@ set(CXXSRC
     rnd_source.cpp
     )
 
-ixxor_add_module(
-    FILES ${CXXHDR} ${CXXSRC}
-    )
+ixxor_add_module()
 

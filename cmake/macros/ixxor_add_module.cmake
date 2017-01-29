@@ -9,8 +9,11 @@ macro(ixxor_add_module)
     endif()
     set(target ${IXXOR_ADD_MODULE_TARGET})
 
-    set(FILES ${IXXOR_ADD_MODULE_FILES})
-    add_library(${target} MODULE ${FILES})
+    if(NOT IXXOR_ADD_MODULE_FILES)
+        set(IXXOR_ADD_MODULE_FILES ${CXXHDR} ${CXXSRC})
+    endif()
+
+    add_library(${target} MODULE ${IXXOR_ADD_MODULE_FILES})
 
     if(IXXOR_ADD_MODULE_INCLUDE_DIRS)
         target_include_directories(${target}

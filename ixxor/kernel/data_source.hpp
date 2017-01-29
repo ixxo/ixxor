@@ -3,6 +3,7 @@
 #include <ixxor/core/symbol.hpp>
 #include <ixxor/core/tick.hpp>
 #include <unordered_map>
+#include <functional>
 #include <vector>
 
 namespace ixxor {
@@ -10,9 +11,13 @@ namespace ixxor {
 class DataSource
 {
 public:
-    using callback_type = void(*)(SymbolID const&, Tick const&);
+    DataSource() = default;
+    virtual ~DataSource() = default;
+    using callback_type = std::function<void(SymbolID const&, Tick const&)>;
     bool is_available(SymbolID const& symbol) const;
     bool subscribe(SymbolID const& symbol, callback_type callback);
+
+    void init();
 
 protected:
     void publish(SymbolID const& symbol, Tick const& tick);

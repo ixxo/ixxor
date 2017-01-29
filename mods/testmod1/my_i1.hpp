@@ -13,7 +13,7 @@ public:
     explicit MyI1(int period)
         : period_(period)
     {
-        std::cout << "MyI1 created, period=" << period << ".\n";
+        std::cout << "MyI1 created, period=" << period_ << ".\n";
     }
     ~MyI1()
     {

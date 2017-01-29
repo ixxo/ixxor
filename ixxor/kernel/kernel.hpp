@@ -4,7 +4,6 @@
 #include "kernel_component_entry.hpp"
 
 #include <string>
-#include <unordered_map>
 #include <array>
 
 namespace ixxor {
@@ -22,7 +21,6 @@ public:
 
     void load(std::string const& module);
     void unload(std::string const& module);
-
     void associate(KernelComponentEntry const& item);
 
     // Create an indicator by name.
@@ -31,13 +29,11 @@ public:
     get(std::string const& name, Args&&... args) const;
 
 private:
-    using handle_map =
-        std::unordered_map<std::string, std::shared_ptr<void> >;
-    using component_map =
-        std::unordered_map<std::string, KernelComponentEntry>;
 
-    handle_map hmap_;
-    component_map components_;
+    struct Impl;
+    std::unique_ptr<Impl> impl_;
+    using fptr_type = void*(*)(void*);
+    fptr_type get_creator(std::string const& name) const;
 };
 
 // inline implementation
@@ -45,21 +41,13 @@ template<class Component, class... Args>
 std::shared_ptr<Component>
 Kernel::get(std::string const& name, Args&&... args) const
 {
-    auto it = components_.find(name);
-    if (it == components_.end()) return nullptr;
-    auto const& entry = it->second;
-    constexpr std::size_t const Np = sizeof...(Args);
-    using param_type = std::array<Protobuf, Np>;
+    using param_type = std::array<Protobuf, sizeof...(Args)>;
     param_type pack { { protobuf_converter<Args>::to_protobuf(args)... } };
-    auto creator = reinterpret_cast<
-            std::shared_ptr<Component>(*)(param_type const&)>(entry.creator);
-    return creator(pack);
-}
-
-inline
-void Kernel::associate(KernelComponentEntry const& item)
-{
-    components_.insert(std::make_pair(item.name, item));
+    if (fptr_type dfunc = get_creator(name)) {
+        using df_type = std::shared_ptr<Component>(*)(param_type const&);
+        return reinterpret_cast<df_type>(dfunc)(pack);
+    }
+    return nullptr;
 }
 
 } // :: ixxor

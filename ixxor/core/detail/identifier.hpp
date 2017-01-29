@@ -5,6 +5,7 @@
 #include <string>
 #include <cstddef>
 #include <algorithm>
+#include <cstring>
 
 namespace ixxor {
 namespace detail {
@@ -69,6 +70,7 @@ Identifier<N>::Identifier()
 template<int N>
 template<int M>
 Identifier<N>::Identifier(char const (&id)[M])
+    : Identifier()
 {
     static_assert(M <= N, "ID capacity overflow");
     std::copy(&id[0], &id[0] + M, id_.data());
@@ -96,6 +98,7 @@ char const* Identifier<N>::data() const
 template<int N>
 bool Identifier<N>::operator==(Identifier<N> const& other) const
 {
+    //return std::strcmp(id_.data(), other.id_.data()) == 0;
     return id_ == other.id_;
 }
 

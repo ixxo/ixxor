@@ -1,7 +1,13 @@
 #include "data_source.hpp"
 #include <stdexcept>
+#include <iostream>
 
 namespace ixxor {
+
+void DataSource::init()
+{
+    init_source();
+}
 
 bool DataSource::is_available(SymbolID const& symbol) const
 {
@@ -10,17 +16,17 @@ bool DataSource::is_available(SymbolID const& symbol) const
 
 bool DataSource::subscribe(SymbolID const& symbol, callback_type callback)
 {
-    auto it = symbols_.find(symbol);
-    if (it == symbols_.end()) {
-        throw std::runtime_error(
-            "You should have checked first if we support this symbol, "
-            "shouldn't you. We don't provide 'is_available' for fun."
-            );
+    auto rv = symbols_.emplace(symbol, callback);
+    if (!rv.second) {
+        std::cerr << "It is subscribed already\n";
+        // It's subscribed already
+        return false;
     }
-    if (it->second) return false;
-    it->second = callback;
+    auto it = rv.first;
     if (!subscribe_symbol(symbol)) {
-        it->second = nullptr;
+        std::cerr << "Could not subscribe symbol...\n";
+        // Invalid.
+        symbols_.erase(it);
         return false;
     }
     return true;
@@ -34,7 +40,11 @@ void DataSource::publish(SymbolID const& symbol, Tick const& tick)
                 "Weird. Ticks for an unsupported/unregistered symbol??");
     }
     // Dispach the parent.
-    it->second(symbol, tick);
+    auto callback = it->second;
+    if (callback) {
+        std::cerr << "Publishing a tick...\n";
+        callback(symbol, tick);
+    }
 }
 
 } // :: ixxor

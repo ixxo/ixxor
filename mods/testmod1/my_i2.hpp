@@ -16,8 +16,8 @@ public:
         factor_(factor)
 
     {
-        std::cout << "MyI2 created, period=" << period << ", factor=" <<
-                     factor<< ".\n";
+        std::cout << "MyI2 created, period=" << period_ << ", factor=" <<
+                     factor_ << ".\n";
     }
     ~MyI2()
     {

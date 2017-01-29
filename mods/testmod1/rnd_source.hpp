@@ -3,12 +3,15 @@
 #include <ixxor/kernel/data_source.hpp>
 #include <memory>
 #include <vector>
+#include <atomic>
+#include <thread>
 
 namespace ixxor {
 
 class RndSource: public DataSource
 {
 public:
+    explicit RndSource(int max_ticks);
     RndSource();
     ~RndSource();
     RndSource(RndSource const&) = delete;
@@ -22,9 +25,11 @@ private:
     std::vector<SymbolID> const& available_symbols() const override;
 
 private:
+    int const max_ticks_;
     std::vector<SymbolID> symbols_;
-    struct Impl;
-    std::unique_ptr<Impl> impl_;
+    std::atomic_bool sem_;
+    static void worker(RndSource*, std::atomic_bool&);
+    std::unique_ptr<std::thread> t_;
 };
 
 } // :: ixxor

@@ -1,6 +1,7 @@
 #ifndef INCLUDED_CORE_PRICE
 #define INCLUDED_CORE_PRICE
 #include <type_traits>
+#include <ostream>
 
 namespace ixxor {
 
@@ -12,7 +13,6 @@ struct Price
     Price(Price const&) = default;
 
     explicit Price(double p): p_(p) {}
-
 
     Price& operator=(Price const&) = default;
 
@@ -47,8 +47,17 @@ Price operator*(T z, Price const& x)
 }
 
 
-
 } // close ixxor
+
+namespace std {
+
+inline
+std::ostream& operator<<(std::ostream& ss, ixxor::Price const& p)
+{
+    return ss << p.p_;
+}
+
+}
 
 #endif
 

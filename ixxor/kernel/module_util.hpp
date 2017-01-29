@@ -14,18 +14,19 @@ void register_indicator(std::string const& name,
                         Kernel* kernel,
                         std::string const& module)
 {
-    static_cast<Kernel*>(kernel)->associate(
-        make_kernel_component_entry<Indicator, IndicatorT, Args...>(
-            name,module
-            )
-        );
+    auto entry = make_kernel_component_entry<Indicator, IndicatorT, Args...>(
+            name, module);
+    kernel->associate(entry);
 }
 
-template<class DataSource>
+template<class DataSourceT, class... Args>
 void register_data_source(std::string name,
                           Kernel* kernel,
                           std::string const& module)
 {
+    auto entry = make_kernel_component_entry<DataSource, DataSourceT, Args...>(
+            name, module);
+    kernel->associate(entry);
 
 }
 

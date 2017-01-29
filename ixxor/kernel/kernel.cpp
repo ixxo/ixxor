@@ -3,11 +3,21 @@
 #include <stdexcept>
 #include <iostream>
 #include <functional>
+#include <unordered_map>
+#include <cstdlib>
+#include <sstream>
 
+#include <sys/stat.h>
 
 namespace ixxor {
 
 namespace {
+
+bool file_exists(char const* filename)
+{
+  struct stat buffer;
+  return stat (filename, &buffer) == 0; 
+}
 
 void module_init(char const* name, void* handle, Kernel* kernel)
 {
@@ -30,18 +40,55 @@ void module_cleanup(char const* name, void* handle, Kernel* kernel)
     }
 }
 
+void* module_load(char const* name)
+{
+    std::string so_file = name;
+    if (!file_exists(so_file.c_str())) {
+        if (char const* ixxor_root = std::getenv("IXXOR_ROOT")) {
+            std::ostringstream ss;
+            ss << ixxor_root << "/share/ixxor/modules/lib" << name << ".so";
+            so_file = ss.str();
+        }
+    }
+    if (!file_exists(so_file.c_str())) {
+        return nullptr;
+    }
+    if (void* h = dlopen(so_file.c_str(), RTLD_LOCAL | RTLD_LAZY)) {
+        return h;
+    } else {
+        std::cerr << "Unable to load a module " << so_file << ": " <<
+                     dlerror() << "\n";
+    }
+    return nullptr;
+}
+
 } // :: ixxor::<anonymous>
 
+struct Kernel::Impl
+{
+    using handle_map =
+        std::unordered_map<std::string, std::shared_ptr<void> >;
+    using component_map =
+        std::unordered_map<std::string, KernelComponentEntry>;
+    handle_map hmap_;
+    component_map components_;
 
-Kernel::Kernel() = default;
+};
+
+
+Kernel::Kernel()
+{
+    impl_.reset(new Impl);
+    
+}
 
 Kernel::~Kernel() = default;
 
 void Kernel::load(std::string const& module)
 {
-    if (!hmap_.count(module)) {
+    if (!impl_->hmap_.count(module)) {
         std::string so_file = module; // for now.
-        if (void* handle = dlopen(so_file.c_str(), RTLD_LOCAL | RTLD_LAZY)) {
+        if (void* handle = module_load(module.c_str())) {
             // Make sure the cleanup is called when this module is unloaded...
             module_init(module.c_str(), handle, this);
             std::shared_ptr<void> hmod {
@@ -51,7 +98,7 @@ void Kernel::load(std::string const& module)
                     dlclose(h);
                 }
             };
-            hmap_[module] = hmod;
+            impl_->hmap_[module] = hmod;
         } else {
             throw std::runtime_error("loading module failed.. rc=...");
         }
@@ -60,10 +107,22 @@ void Kernel::load(std::string const& module)
 
 void Kernel::unload(std::string const& module)
 {
-    auto it = hmap_.find(module);
-    if (it != hmap_.end() && it->second.unique()) {
-        hmap_.erase(it);
+    auto it = impl_->hmap_.find(module);
+    if (it != impl_->hmap_.end() && it->second.unique()) {
+        impl_->hmap_.erase(it);
     }
+}
+
+void Kernel::associate(KernelComponentEntry const& item)
+{
+    impl_->components_.insert(std::make_pair(item.name, item));
+}
+
+Kernel::fptr_type Kernel::get_creator(std::string const& name) const
+{
+    auto it = impl_->components_.find(name);
+    if (it == impl_->components_.end()) return nullptr;
+    return reinterpret_cast<fptr_type>(it->second.creator);
 }
 
 
