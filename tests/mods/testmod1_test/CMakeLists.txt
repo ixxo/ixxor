@@ -1,5 +1,6 @@
 set(CXXHDR)
 set(CXXSRC
+    rnd_source.t.cpp
     loading.t.cpp
     )
 

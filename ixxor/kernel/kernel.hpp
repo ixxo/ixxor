@@ -23,13 +23,11 @@ public:
     void unload(std::string const& module);
     void associate(KernelComponentEntry const& item);
 
-    // Create an indicator by name.
     template<class Component, class... Args>
     std::shared_ptr<Component> // should be unique but yeah
-    get(std::string const& name, Args&&... args) const;
+    get(std::string const& name, Args... args) const;
 
 private:
-
     struct Impl;
     std::unique_ptr<Impl> impl_;
     using fptr_type = void*(*)(void*);
@@ -39,7 +37,7 @@ private:
 // inline implementation
 template<class Component, class... Args>
 std::shared_ptr<Component>
-Kernel::get(std::string const& name, Args&&... args) const
+Kernel::get(std::string const& name, Args... args) const
 {
     using param_type = std::array<Protobuf, sizeof...(Args)>;
     param_type pack { { protobuf_converter<Args>::to_protobuf(args)... } };

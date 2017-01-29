@@ -42,7 +42,6 @@ void DataSource::publish(SymbolID const& symbol, Tick const& tick)
     // Dispach the parent.
     auto callback = it->second;
     if (callback) {
-        std::cerr << "Publishing a tick...\n";
         callback(symbol, tick);
     }
 }
