@@ -7,21 +7,15 @@
 
 namespace ixxor {
 
-
-
-
 RndSource::RndSource(int max_ticks)
     : max_ticks_(max_ticks)
 {
-    std::cerr << "RndSource constructor called\n";
     symbols_ = {SymbolID{"IXXORND"}};
     sem_= false;
 }
 
 RndSource::RndSource():
-    RndSource(0)
-{
-}
+    RndSource(0) {}
 
 RndSource::~RndSource()
 {
