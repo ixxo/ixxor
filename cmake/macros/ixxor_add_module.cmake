@@ -34,6 +34,7 @@ macro(ixxor_add_module)
         PRIVATE
             kernel
             core
+            appenv
         )
 
     install(TARGETS ${target}

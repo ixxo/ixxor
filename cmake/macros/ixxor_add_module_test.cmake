@@ -45,6 +45,7 @@ macro(ixxor_add_module_test)
         PRIVATE
             kernel
             core
+            appenv
         )
 
     target_link_libraries(${target}

@@ -1,4 +1,5 @@
 #include "kernel.hpp"
+#include <ixxor/appenv/path_util.hpp>
 #include <dlfcn.h>
 #include <stdexcept>
 #include <iostream>
@@ -6,17 +7,11 @@
 #include <cstdlib>
 #include <sstream>
 
-#include <sys/stat.h>
 
 namespace ixxor {
 
 namespace {
 
-bool file_exists(char const* filename)
-{
-  struct stat buffer;
-  return stat (filename, &buffer) == 0; 
-}
 
 void module_init(char const* name, void* handle, Kernel* kernel)
 {
@@ -42,14 +37,14 @@ void module_cleanup(char const* name, void* handle, Kernel* kernel)
 void* module_load(char const* name)
 {
     std::string so_file = name;
-    if (!file_exists(so_file.c_str())) {
+    if (!path_util::exists(so_file.c_str())) {
         if (char const* ixxor_root = std::getenv("IXXOR_ROOT")) {
             std::ostringstream ss;
             ss << ixxor_root << "/share/ixxor/modules/lib" << name << ".so";
             so_file = ss.str();
         }
     }
-    if (!file_exists(so_file.c_str())) {
+    if (!path_util::exists(so_file.c_str())) {
         return nullptr;
     }
     if (void* h = dlopen(so_file.c_str(), RTLD_LOCAL | RTLD_LAZY)) {

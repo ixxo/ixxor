@@ -20,6 +20,7 @@ target_link_libraries(${target}
     kernel
     core
     maths
+    appenv
     )
 
 
