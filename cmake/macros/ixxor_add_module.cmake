@@ -37,6 +37,8 @@ macro(ixxor_add_module)
             appenv
         )
 
+    set_target_properties(${target} PROPERTIES FOLDER Modules)
+
     install(TARGETS ${target}
         DESTINATION ${IXXOR_PLUGINS_DIR}
         )

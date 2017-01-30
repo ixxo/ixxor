@@ -54,7 +54,6 @@ struct hash<ixxor::detail::Identifier<N> >
 } // close std
 
 
-
 //
 // Implementation
 //

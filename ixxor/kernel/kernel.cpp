@@ -1,44 +1,41 @@
 #include "kernel.hpp"
 #include <ixxor/appenv/path_util.hpp>
-#include <dlfcn.h>
+#include <ixxor/appenv/sys_util.hpp>
 #include <stdexcept>
 #include <iostream>
 #include <functional>
-#include <cstdlib>
 #include <sstream>
-
 
 namespace ixxor {
 
 namespace {
 
-
-void module_init(char const* name, void* handle, Kernel* kernel)
+void module_init(std::string const& name, void* handle, Kernel* kernel)
 {
-    if (void* f = dlsym(handle, "ixxo_init")) {
-        auto ixxo_init = reinterpret_cast<void(*)(char const*, void*)>(f);
-        ixxo_init(name, kernel);
+    using f_sig = void(*)(char const*, void*);
+    if (auto f = sys_util::find_symbol<f_sig>(handle, "ixxo_init")) {
+        f(name.c_str(), kernel);
     } else {
         std::cerr << "No initializatino function found.\n";
     }
 }
 
-void module_cleanup(char const* name, void* handle, Kernel* kernel)
+void module_cleanup(std::string const& name, void* handle, Kernel* kernel)
 {
     // just call the cleanup function, if there's one.
-    if (void* f = dlsym(handle, "ixxo_cleanup")) {
-        auto ixxo_cleanup = reinterpret_cast<void(*)(char const*, void*)>(f);
-        ixxo_cleanup(name, kernel);
+    using f_sig = void(*)(char const*, void*);
+    if (auto f = sys_util::find_symbol<f_sig>(handle, "ixxo_cleanup")) {
+        f(name.c_str(), kernel);
     } else {
         std::cerr << "no cleanup function found....\n";
     }
 }
 
-void* module_load(char const* name)
+std::shared_ptr<void> module_load(std::string const& name, Kernel* kernel)
 {
     std::string so_file = name;
     if (!path_util::exists(so_file.c_str())) {
-        if (char const* ixxor_root = std::getenv("IXXOR_ROOT")) {
+        if (char const* ixxor_root = sys_util::get_env("IXXOR_ROOT")) {
             std::ostringstream ss;
             ss << ixxor_root << "/share/ixxor/modules/lib" << name << ".so";
             so_file = ss.str();
@@ -47,13 +44,16 @@ void* module_load(char const* name)
     if (!path_util::exists(so_file.c_str())) {
         return nullptr;
     }
-    if (void* h = dlopen(so_file.c_str(), RTLD_LOCAL | RTLD_LAZY)) {
-        return h;
-    } else {
-        std::cerr << "Unable to load a module " << so_file << ": " <<
-                     dlerror() << "\n";
-    }
-    return nullptr;
+    void* handle = sys_util::load_module(so_file.c_str());
+    module_init(name, handle, kernel);
+    std::shared_ptr<void> hmod {
+        handle,
+        [kernel,name](void* w) {
+            module_cleanup(name, w, kernel); 
+            sys_util::close_module(w);
+        }
+    };
+    return hmod;
 }
 
 } // :: ixxor::<anonymous>
@@ -67,16 +67,7 @@ void Kernel::load(std::string const& module)
 {
     if (!hmap_.count(module)) {
         std::string so_file = module; // for now.
-        if (void* handle = module_load(module.c_str())) {
-            // Make sure the cleanup is called when this module is unloaded...
-            module_init(module.c_str(), handle, this);
-            std::shared_ptr<void> hmod {
-                handle,
-                [this,module](void* h) {
-                    module_cleanup(module.c_str(), h, this); 
-                    dlclose(h);
-                }
-            };
+        if (auto hmod = module_load(module, this)) {
             hmap_[module] = hmod;
         } else {
             throw std::runtime_error("loading module failed.. rc=...");
