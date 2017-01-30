@@ -1,6 +1,8 @@
 #ifndef INCLUDED_IXXOR_MATH_ACCUMULATOR
 #define INCLUDED_IXXOR_MATH_ACCUMULATOR
 
+#include <functional>
+
 namespace ixxor {
 
 template<typename T, class BinaryOperation = std::plus<T> >

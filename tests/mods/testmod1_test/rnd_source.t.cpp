@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <ixxor/kernel/kernel.hpp>
 #include <ixxor/kernel/data_source.hpp>
-#include <ixxor/math/accumulator.hpp>
+#include <ixxor/maths/accumulator.hpp>
 #include <thread>
 #include <chrono>
 #include <iostream>

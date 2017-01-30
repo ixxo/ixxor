@@ -12,5 +12,6 @@ include(macros)
 add_subdirectory(ixxor)
 add_subdirectory(mods)
 add_subdirectory(tests)
+add_subdirectory(apps)
 
 

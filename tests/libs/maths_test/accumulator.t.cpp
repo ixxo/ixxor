@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <ixxor/math/accumulator.hpp>
+#include <ixxor/maths/accumulator.hpp>
 #include <type_traits>
 
 TEST(ixxor_math, accumulator_test_double)
