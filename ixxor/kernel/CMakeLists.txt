@@ -1,9 +1,13 @@
 get_filename_component(target ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 
 set(CXXHDR
-    kernel.hpp
-    indicator.hpp
     data_source.hpp
+    indicator.hpp
+    kernel.hpp
+    kernel_component.hpp
+    kernel_component_entry.hpp
+    module_util.hpp
+    protobuf.hpp
     )
 
 set(CXXSRC

@@ -90,11 +90,35 @@ bool operator<(Ptime const& lhs, Ptime const& rhs)
     return lhs.from_epoch() < rhs.from_epoch();
 }
 
+
 inline
 bool operator!=(Ptime const& lhs, Ptime const& rhs)
 {
     return !(lhs == rhs);
 }
+
+
+inline
+bool operator>(Ptime const& lhs, Ptime const& rhs)
+{
+    return rhs < lhs;
+}
+
+inline
+bool operator<=(Ptime const& lhs, Ptime const& rhs)
+{
+    return !(lhs > rhs);
+}
+
+inline
+bool operator>=(Ptime const& lhs, Ptime const& rhs)
+{
+    return rhs <= lhs;
+}
+
+
+
+
 
 
 } // close ixxor

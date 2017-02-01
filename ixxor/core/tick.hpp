@@ -13,7 +13,7 @@ struct Tick
     Volume v;
 };
 
-}
+} // : ixxor
 
 #endif
 

@@ -4,6 +4,7 @@
 #include <ixxor/core/tick.hpp>
 #include <ixxor/core/symbol.hpp>
 #include <atomic>
+#include <algorithm>
 #include <unordered_map>
 
 namespace ixxor {
@@ -42,9 +43,9 @@ template<class Iter>
 void Indicator::update(Ptime const& ts, Iter first, Iter last)
 {
     // we should probably lock it for a bit until we get out of here
-    for(auto it = first; it != last; ++it) {
-        sigs_.find(it->first)->second = it->second;
-    }
+    std::for_each(first, last, [this](auto const& p) {
+                  this->sigs_.find(p.first)->second = p.second;
+                  });
     ts_ = ts;
 }
 

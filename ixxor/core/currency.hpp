@@ -5,10 +5,6 @@
 #include <ostream>
 
 namespace ixxor {
-class Currency;
-
-bool operator==(Currency const& lhs, Currency const& rhs);
-bool operator!=(Currency const& lhs, Currency const& rhs);
 
 class Currency
 {
@@ -18,14 +14,15 @@ public:
     Currency(std::string const&);
     Currency();
     Currency(Currency const& other);
+    Currency(Currency&& other);
     Currency& operator=(Currency const&);
+    Currency& operator=(Currency&&);
 
     char const* data() const;
-private:
-    friend bool operator==(Currency const& lhs, Currency const& rhs);
-    friend bool operator!=(Currency const& lhs, Currency const& rhs);
+    
+    bool operator==(Currency const& other) const;
+    bool operator!=(Currency const& other) const;
 };
-
 
 std::ostream& operator<<(std::ostream&, Currency const&);
 

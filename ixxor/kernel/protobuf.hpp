@@ -35,10 +35,9 @@ struct protobuf_converter
 // dummy but who cares...
 template<class T>
 struct protobuf_converter<T,
-    typename std::enable_if<
+    std::enable_if_t<
         std::is_integral<T>::value ||
-        std::is_floating_point<T>::value
-    >::type
+        std::is_floating_point<T>::value>
     >
 {
     static Protobuf to_protobuf(T const& t)

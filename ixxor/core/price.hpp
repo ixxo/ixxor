@@ -5,12 +5,13 @@
 
 namespace ixxor {
 
-struct Price
+class Price
 {
     double p_; // This should be fixed precision but will do for now.
-
+public:
     Price() = default;
     Price(Price const&) = default;
+    Price(Price&&) = default;
 
     explicit Price(double p): p_(p) {}
 
@@ -28,6 +29,11 @@ struct Price
     {
         p_ += add.p_;
         return *this;
+    }
+    
+    explicit operator double() const
+    {
+        return p_;
     }
 };
 
@@ -54,7 +60,7 @@ namespace std {
 inline
 std::ostream& operator<<(std::ostream& ss, ixxor::Price const& p)
 {
-    return ss << p.p_;
+    return ss << static_cast<double>(p);
 }
 
 }
